@@ -6,31 +6,41 @@ import (
 )
 
 func main() {
-	deltaCoord := coordinate{row: 1, col: 3}
-	coord := coordinate{0, 0}
+	deltaCoords := []coordinate {coordinate{1,1}, coordinate{1,3}, coordinate{1,5}, coordinate{1,7}, coordinate{2, 1}}
+	
+	for _, deltaCoord := range deltaCoords {
+		treeCount := findEncounteredTrees(deltaCoord)
+		fmt.Printf("Hit %d trees\n", treeCount)
+	}
+
+}
+
+func findEncounteredTrees(deltaCoord coordinate) int {
+	//fmt.Printf("\n\nDelta coord %d, %d\n", deltaCoord.row, deltaCoord.col)
+	coord := coordinate{1, 1}
 
 	forrestLines := utils.ReadLinesFromFile("map.txt")
 
 	treeCount := 0
-	for i, line := range forrestLines {
-		forrestLine := forrestLine{line}
-		landedOnTree := forrestLine.hasTreeOn(coord)
+	lineIndex := 0
 
-		fmt.Printf("On line %d, we are on coord row: %d and col: %d and hit tree: %t\n", i, coord.row, coord.col, landedOnTree)
+	for lineIndex < len(forrestLines) {
+		forrestLine := forrestLine{forrestLines[lineIndex]}
+		landedOnTree := forrestLine.hasTreeOn(coord)
 
 		if (landedOnTree) {
 			treeCount++
 		}
 
 		coord = coord.move(deltaCoord)
+		lineIndex += deltaCoord.row
 	}
 
-	fmt.Printf("Hit %d trees\n", treeCount)
-
+	return treeCount
 }
 
 
-// zero-index based
+// one-index based
 type coordinate struct {
 	row, col int
 }
@@ -44,8 +54,17 @@ type forrestLine struct {
 }
 
 func (f forrestLine) hasTreeOn(coordinate coordinate) bool {
-	lineSize := len(f.line)
-	soughtIndex := coordinate.col % lineSize
-	return string(f.line[soughtIndex]) == "#"
+	lineLength := len(f.line)
+	mod := coordinate.col % lineLength
+
+	var positionInLine int
+
+	if mod == 0 {
+		positionInLine = lineLength
+	} else {
+		positionInLine = mod
+	}
+
+	return string(f.line[positionInLine-1]) == "#"
 }
 
