@@ -75,7 +75,7 @@ func (p passport) isValid() bool {
 	validIyr := p.hasValidIyr()
 	validPid := p.hasValidPid()
 
-	//fmt.Printf("%t - %t - %t - %t - %t - %t - %t\n", validByr, validEcl, validEyr, validHcl, validHgt, validIyr, validPid)
+	fmt.Printf("%t - %t - %t - %t - %t - %t - %t\n", validByr, validEcl, validEyr, validHcl, validHgt, validIyr, validPid)
 
 	return p.hasRequiredFields() &&
 		validByr &&
@@ -97,10 +97,10 @@ func (p passport) hasRequiredFields() bool {
 	strings.Contains(p.line, "pid:")
 }
 
-var hgtRegexp = regexp.MustCompile(`hgt:((\d{2,3})(in|cm))`)
+var hgtRegexp = regexp.MustCompile(`hgt:((\d{2,3})(in|cm))(\s|$)`)
 func (p passport) hasValidHgt() bool {
 	matches := hgtRegexp.FindStringSubmatch(p.line)
-	if (len(matches) != 4) {
+	if (len(matches) != 5) {
 		return false
 	}
 
@@ -117,40 +117,40 @@ func (p passport) hasValidHgt() bool {
 	return false
 }
 
-var pidRegexp = regexp.MustCompile(`pid:\d{9}`)
+var pidRegexp = regexp.MustCompile(`pid:\d{9}(\s|$)`)
 func (p passport) hasValidPid() bool {
-	return len(pidRegexp.FindStringSubmatch(p.line)) == 1
+	return len(pidRegexp.FindStringSubmatch(p.line)) == 2
 }
 
-var eclRegexp = regexp.MustCompile(`ecl:(amb|blu|brn|gry|grn|hzl|oth)`)
+var eclRegexp = regexp.MustCompile(`ecl:(amb|blu|brn|gry|grn|hzl|oth)(\s|$)`)
 func (p passport) hasValidEcl() bool {
 	matches := eclRegexp.FindStringSubmatch(p.line)
-	return len(matches) == 2
+	return len(matches) == 3
 }
 
-var hclRegexp = regexp.MustCompile(`hcl:#[a-f0-9]{6}`)
+var hclRegexp = regexp.MustCompile(`hcl:#[a-f0-9]{6}(\s|$)`)
 func (p passport) hasValidHcl() bool {
-	return len(hclRegexp.FindStringSubmatch(p.line)) == 1
+	return len(hclRegexp.FindStringSubmatch(p.line)) == 2
 }
 
-var byrRegexp = regexp.MustCompile(`byr:(\d{4})`)
+var byrRegexp = regexp.MustCompile(`byr:(\d{4})(\s|$)`)
 func (p passport) hasValidByr() bool {
 	return p.hasValidYear(byrRegexp, 1920, 2002)
 }
 
-var iyrRegexp = regexp.MustCompile(`iyr:(\d{4})`)
+var iyrRegexp = regexp.MustCompile(`iyr:(\d{4})(\s|$)`)
 func (p passport) hasValidIyr() bool {
 	return p.hasValidYear(iyrRegexp, 2010, 2020)
 }
 
-var eyrRegexp = regexp.MustCompile(`eyr:(\d{4})`)
+var eyrRegexp = regexp.MustCompile(`eyr:(\d{4})(\s|$)`)
 func (p passport) hasValidEyr() bool {
 	return p.hasValidYear(eyrRegexp, 2020, 2030)
 }
 
 func (p passport) hasValidYear(regexp *regexp.Regexp, min int, max int) bool {
 	matches := regexp.FindStringSubmatch(p.line)
-	if (len(matches) != 2) {
+	if (len(matches) != 3) {
 		return false
 	}
 
