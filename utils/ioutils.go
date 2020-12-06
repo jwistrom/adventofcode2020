@@ -26,6 +26,16 @@ func ReadLinesFromFile(fileName string) []string {
 	return lines
 }
 
+//Find finds string in slice
+func Find(slice []string, val string) (int, bool) {
+    for i, item := range slice {
+        if item == val {
+            return i, true
+        }
+	}
+    return -1, false
+}
+
 func check(e error) {
 	if e != nil {
 		log.Fatal(e)

@@ -14,14 +14,14 @@ func main() {
 
 	seats := findAllSeats(lines)
 
-	maxId := maxID(seats)
+	maxID := maxID(seats)
 
-	fmt.Printf("Max id is %d and min id is %d\n", maxId, minID(seats))
+	fmt.Printf("Max id is %d and min id is %d\n", maxID, minID(seats))
 
 	sortedIds := sortedIds(seats)
 
-	missingId := findMissingId(sortedIds)
-	fmt.Printf("Missing id is %d\n", missingId)
+	missingID := findMissingID(sortedIds)
+	fmt.Printf("Missing id is %d\n", missingID)
 
 }
 
@@ -33,7 +33,7 @@ type seat struct {
 	row, col int
 }
 
-func findMissingId(ids []int) int {
+func findMissingID(ids []int) int {
 
 	for i:=1 ; i<len(ids) ; i++ {
 		previous := ids[i-1]
