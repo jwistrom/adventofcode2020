@@ -36,6 +36,32 @@ func Find(slice []string, val string) (int, bool) {
     return -1, false
 }
 
+//FindInt finds int in slice
+func FindInt(slice []int, val int) (int, bool) {
+    for i, item := range slice {
+        if item == val {
+            return i, true
+        }
+	}
+    return -1, false
+}
+
+//AppendIntIfNotPresent appends if not present
+func AppendIntIfNotPresent(slice []int, new int) []int {
+	contains := false
+	for _, item := range slice {
+		if item == new {
+			contains = true
+		}
+	}
+	if !contains {
+		return append(slice, new)
+	} 
+
+	return slice
+	
+}
+
 func check(e error) {
 	if e != nil {
 		log.Fatal(e)
