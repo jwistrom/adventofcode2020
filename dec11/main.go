@@ -181,7 +181,7 @@ func nextSeatDown(row int, col int) (int, int) {
 	return string(seats[row][col])
  }
 
- func abs(x int) int {
+func abs(x int) int {
 	if x < 0 {
 		return -x
 	}

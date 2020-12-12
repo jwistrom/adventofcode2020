@@ -62,6 +62,23 @@ func AppendIntIfNotPresent(slice []int, new int) []int {
 	
 }
 
+//Abs absolute value
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+//Mod handling negative numbers
+func Mod(d, m int) int {
+	var res int = d % m
+	if ((res < 0 && m > 0) || (res > 0 && m < 0)) {
+	   return res + m
+	}
+	return res
+ }
+
 func check(e error) {
 	if e != nil {
 		log.Fatal(e)

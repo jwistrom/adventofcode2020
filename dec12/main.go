@@ -5,15 +5,18 @@ import (
 	"../utils"
 	"strconv"
 	"errors"
+	"math"
 )
 
 
-const fileName = "test_input.txt"
+const fileName = "input.txt"
 
 func main() {
 
 	instructions := parseInstructions()
 	part1(instructions)
+
+	part2(instructions)
 
 }
 
@@ -26,6 +29,18 @@ func part1(instructions []instruction) {
 
 	manhattanDistance := utils.Abs(currentPosition.ns) + utils.Abs(currentPosition.ew)
 	fmt.Printf("Answer to part 1: %d\n", manhattanDistance)
+}
+
+func part2(instructions []instruction) {
+	currentShipPosition := position{0, 0, "E"}
+	currentWaypoint := waypoint{1, 10}
+
+	for _, instruction := range instructions {
+		currentShipPosition, currentWaypoint = moveWithWaypoint(currentShipPosition, currentWaypoint, instruction)
+	}
+
+	manhattanDistance := utils.Abs(currentShipPosition.ns) + utils.Abs(currentShipPosition.ew)
+	fmt.Printf("Answer to part 2: %d\n", manhattanDistance)
 }
 
 func parseInstructions() (ret []instruction) {
@@ -49,6 +64,40 @@ type instruction struct {
 type position struct {
 	ns, ew int
 	heading direction
+}
+
+//coordinates relative ship
+type waypoint struct {
+	ns, ew int
+}
+
+func moveWithWaypoint(shipPosition position, wp waypoint, instruct instruction) (position, waypoint) {
+	if instruct.direction == "N" {
+		return shipPosition, waypoint{wp.ns + instruct.amount, wp.ew}
+	} else if instruct.direction == "S" {
+		return shipPosition, waypoint{wp.ns - instruct.amount, wp.ew}
+	} else if instruct.direction == "E" {
+		return shipPosition, waypoint{wp.ns, wp.ew + instruct.amount}
+	} else if instruct.direction == "W" {
+		return shipPosition, waypoint{wp.ns, wp.ew - instruct.amount}
+	} else if instruct.direction == "F" {
+		newPosition := position{shipPosition.ns + instruct.amount * wp.ns, shipPosition.ew + instruct.amount * wp.ew, shipPosition.heading}
+		return newPosition, wp
+	} else if instruct.direction == "R" {
+		newWaypoint := wp.rotateAroundShip(instruct.amount)
+		return shipPosition, newWaypoint
+	} else if instruct.direction == "L" {
+		newWaypoint := wp.rotateAroundShip(-instruct.amount)
+		return shipPosition, newWaypoint
+	}
+	panic(errors.New("Unknow instruction"))
+}
+
+func (wp waypoint) rotateAroundShip(degrees int) waypoint {
+	radians := toRadians(-degrees)
+	newEw := float64(wp.ew) * math.Cos(radians) - float64(wp.ns) * math.Sin(radians)
+	newNs := float64(wp.ew) * math.Sin(radians) + float64(wp.ns) * math.Cos(radians)
+	return waypoint{int(math.Round(newNs)), int(math.Round(newEw))}
 }
 
 func (p position) move(instruct instruction) position {
@@ -111,4 +160,8 @@ func directionFromInt(i int) direction {
 	}
 
 	panic(errors.New("Invalid degrees " + fmt.Sprint(i)))
+}
+
+func toRadians(degrees int) float64 {
+	return (math.Pi / float64(180)) * float64(degrees)
 }
